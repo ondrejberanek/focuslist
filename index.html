@@ -10,13 +10,26 @@
 
     <h1>FocusList</h1>
 
+    <div class="topBar">
+        <p id="counter">Počet úkolů: 0</p>
+        <button id="darkModeToggle">Dark mode</button>
+    </div>
+
     <div class="container">
-        <input type="text" id="taskInput" placeholder="úkol...">
-        <button id="addTaskBtn">Přidat</button>
+        <input 
+            type="text" 
+            id="taskInput" 
+            placeholder="Zadej úkol..."
+        >
+
+        <button id="addTaskBtn">
+            Přidat
+        </button>
     </div>
 
     <ul id="taskList"></ul>
 
     <script src="script.js"></script>
+
 </body>
 </html>
