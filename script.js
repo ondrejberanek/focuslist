@@ -5,6 +5,13 @@ const counter = document.getElementById("counter");
 const darkBtn = document.getElementById("darkModeToggle");
 
 button.addEventListener("click", addTask);
+input.addEventListener("keypress", function(event){
+
+    if(event.key === "Enter"){
+        addTask();
+    }
+
+});
 darkBtn.addEventListener("click", toggleDarkMode);
 
 loadTasks();
