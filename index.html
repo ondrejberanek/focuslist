@@ -1,35 +1,160 @@
 <!DOCTYPE html>
 <html lang="cs">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>FocusList</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-
-    <h1>FocusList</h1>
-
-    <div class="topBar">
-        <p id="counter">Počet úkolů: 0</p>
-        <button id="darkModeToggle">Dark mode</button>
-    </div>
-
-    <div class="container">
-        <input 
-            type="text" 
-            id="taskInput" 
-            placeholder="Zadej úkol..."
-        >
-
-        <button id="addTaskBtn">
-            Přidat
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="wrapper">
+      <!-- HEADER -->
+      <header class="app-header">
+        <div class="header-content">
+          <h1><i class="fas fa-list-check"></i> FocusList</h1>
+        </div>
+        <button id="darkModeToggle" class="theme-toggle" title="Přepnout dark mode">
+          <i class="fas fa-moon"></i>
         </button>
+      </header>
+
+      <!-- INPUT SECTION -->
+      <section class="input-section">
+        <div class="input-group">
+          <input
+            type="text"
+            id="taskInput"
+            placeholder="Zadej nový úkol... (Enter pro přidání)"
+            autocomplete="off"
+            class="task-input"
+          />
+          <select id="prioritySelect" class="priority-select" title="Vybrat prioritu">
+            <option value="low">🟢 Nízká</option>
+            <option value="medium" selected>🟡 Normální</option>
+            <option value="high">🔴 Vysoká</option>
+          </select>
+          <button id="addTaskBtn" class="add-btn" title="Přidat úkol">
+            <i class="fas fa-plus"></i> Přidat
+          </button>
+        </div>
+      </section>
+
+      <!-- SEARCH SECTION -->
+      <section class="search-section">
+        <input
+          type="text"
+          id="searchInput"
+          placeholder="🔍 Hledat úkoly..."
+          class="search-input"
+        />
+      </section>
+
+      <!-- CONTROLS SECTION -->
+      <section class="controls-section">
+        <div class="sort-controls">
+          <label for="sortSelect"><i class="fas fa-sort"></i> Třídění:</label>
+          <select id="sortSelect" class="sort-select">
+            <option value="newest">Nejnovější první</option>
+            <option value="oldest">Nejstarší první</option>
+            <option value="priority">Podle priority</option>
+            <option value="completed-last">Hotové na konec</option>
+          </select>
+        </div>
+        <div class="filter-controls">
+          <button class="filter-btn active" data-filter="all">
+            <i class="fas fa-list"></i> Vše <span class="count">0</span>
+          </button>
+          <button class="filter-btn" data-filter="active">
+            <i class="fas fa-circle-notch"></i> Aktivní <span class="count">0</span>
+          </button>
+          <button class="filter-btn" data-filter="done">
+            <i class="fas fa-check-circle"></i> Hotové <span class="count">0</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- STATS SECTION -->
+      <section class="stats-section">
+        <div class="stat-card">
+          <div class="stat-icon total">
+            <i class="fas fa-tasks"></i>
+          </div>
+          <div class="stat-info">
+            <p class="stat-label">Všechny</p>
+            <p class="stat-value" id="statTotal">0</p>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon active">
+            <i class="fas fa-hourglass-start"></i>
+          </div>
+          <div class="stat-info">
+            <p class="stat-label">Aktivní</p>
+            <p class="stat-value" id="statActive">0</p>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon completed">
+            <i class="fas fa-check"></i>
+          </div>
+          <div class="stat-info">
+            <p class="stat-label">Hotové</p>
+            <p class="stat-value" id="statDone">0</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- TASK LIST -->
+      <section class="task-section">
+        <ul id="taskList" class="task-list"></ul>
+      </section>
+
+      <!-- BULK ACTIONS -->
+      <section class="bulk-actions">
+        <button id="markAllBtn" class="action-btn mark-all" title="Označit všechny jako hotové">
+          <i class="fas fa-check-double"></i> Označit vše
+        </button>
+        <button id="clearDoneBtn" class="action-btn clear-done" title="Smazat hotové úkoly">
+          <i class="fas fa-trash"></i> Smazat hotové
+        </button>
+      </section>
     </div>
 
-    <ul id="taskList"></ul>
+    <!-- MODAL OKNO PRO EDITACI -->
+    <div id="editModal" class="modal hidden">
+      <div class="modal-overlay"></div>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2><i class="fas fa-edit"></i> Upravit úkol</h2>
+          <button class="modal-close" id="closeModal">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <input
+            type="text"
+            id="editTaskInput"
+            placeholder="Text úkolu..."
+            class="edit-input"
+          />
+          <select id="editPrioritySelect" class="edit-priority-select">
+            <option value="low">🟢 Nízká priorita</option>
+            <option value="medium">🟡 Normální priorita</option>
+            <option value="high">🔴 Vysoká priorita</option>
+          </select>
+          <p class="modal-date" id="taskDate"></p>
+        </div>
+        <div class="modal-footer">
+          <button class="btn-secondary" id="cancelEdit">Zrušit</button>
+          <button class="btn-primary" id="saveEdit">Uložit změny</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TOAST NOTIFIKACE -->
+    <div id="toast" class="toast"></div>
 
     <script src="script.js"></script>
-
-</body>
+  </body>
 </html>
